@@ -61,7 +61,7 @@ begin
 end
 
 GO
-create procedure spListagemAlunos
+create procedure spListagemUser
 as
 begin
  select * from TBUSER 
