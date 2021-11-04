@@ -260,6 +260,7 @@ end
 GO
 create procedure spIncluiCompany
 (
+	@idUser INT,
 	@name varchar(100),
 	@postalCode varchar(20),
 	@addressNumber INT,
@@ -269,13 +270,17 @@ create procedure spIncluiCompany
 as
 begin
  insert into TBCOMPANY
- (NAME,
+	(
+	IDUSER,
+	NAME,
 	POSTAL_CODE,
 	ADDRESS_NUMBER,
 	LATITUDE,
-	LONGITUDE)
+	LONGITUDE
+	)
  values
- (@name,
+ (	@idUser,
+	@name,
 	@postalCode,
 	@addressNumber,
 	@latitude,
@@ -285,8 +290,9 @@ end
 GO 
 create procedure spAlteraCompany
 (
- @id int,
-@name varchar(100),
+	@id int,
+	@idUser int,
+	@name varchar(100),
 	@postalCode varchar(20),
 	@addressNumber INT,
 	@latitude decimal(8,5),
@@ -296,6 +302,7 @@ as
 begin
  update TBCOMPANY set
  NAME = @name, 
+ IDUSER = @idUser,
  POSTAL_CODE = @postalCode,
  ADDRESS_NUMBER = @addressNumber,
  LATITUDE = @latitude,
