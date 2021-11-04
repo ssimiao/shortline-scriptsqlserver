@@ -1,6 +1,19 @@
 USE shortline;
 
 GO
+DECLARE @sql VARCHAR(MAX)='';
+
+SELECT @sql=@sql+'drop procedure ['+name +'];' FROM sys.objects 
+WHERE type = 'p' AND  is_ms_shipped = 0
+
+exec(@sql);
+
+
+
+
+------- Procedures Legado -----------
+
+GO
 create procedure spIncluiUser
 (
  @login varchar(100),
@@ -37,7 +50,7 @@ begin
  FIRST_NAME = @firstName,
  LAST_NAME = @lastName,
  PASSWORD = @password
- where iduser = @id 
+ where id = @id 
 end
 
 GO
@@ -47,7 +60,7 @@ create procedure spExcluiUser
 )
 as
 begin
- delete TBUSER where IDUSER = @id 
+ delete TBUSER where ID = @id 
 end
 
 GO
@@ -57,7 +70,7 @@ create procedure spConsultaUser
 )
 as
 begin
- select * from TBUSER where IDUSER = @id
+ select * from TBUSER where ID = @id
 end
 
 GO
@@ -126,7 +139,7 @@ begin
  CHECK_OUT = @checkOut,
  CODE = @code,
  STATUS = @status
- where iduser = @id 
+ where id = @id 
 end
 
 GO
@@ -136,7 +149,7 @@ create procedure spExcluiReserve
 )
 as
 begin
- delete TBRESERVES where IDRESERVE = @id 
+ delete TBRESERVES where ID = @id 
 end
 
 GO
@@ -146,7 +159,7 @@ create procedure spConsultaReserve
 )
 as
 begin
- select * from TBRESERVES where IDRESERVE = @id
+ select * from TBRESERVES where ID = @id
 end
 
 GO
@@ -212,7 +225,7 @@ begin
  LAST_CODE = @lastCode,
  WAIT_INT_LINE = @waitInLine,
  DESCRIPTION_QUEUE = @description
- where IDQUEUE = @id 
+ where ID = @id 
 end
 
 GO
@@ -222,7 +235,7 @@ create procedure spExcluiQueue
 )
 as
 begin
- delete TBRESERVES where IDRESERVE = @id 
+ delete TBRESERVES where ID = @id 
 end
 
 GO
@@ -232,7 +245,7 @@ create procedure spConsultaQueue
 )
 as
 begin
- select * from TBQUEUE where IDQUEUE = @id
+ select * from TBQUEUE where ID = @id
 end
 
 GO
@@ -287,7 +300,7 @@ begin
  ADDRESS_NUMBER = @addressNumber,
  LATITUDE = @latitude,
  LONGITUDE = @longitude
- where IDCOMPANY = @id 
+ where ID = @id 
 end
 
 GO
@@ -297,7 +310,7 @@ create procedure spExcluiCompany
 )
 as
 begin
- delete TBCOMPANY where IDCOMPANY = @id 
+ delete TBCOMPANY where ID = @id 
 end
 
 GO
@@ -307,7 +320,7 @@ create procedure spConsultaCompany
 )
 as
 begin
- select * from TBCOMPANY where IDCOMPANY = @id
+ select * from TBCOMPANY where ID = @id
 end
 
 GO
@@ -394,7 +407,7 @@ create procedure spConsultaLogReserve
 )
 as
 begin
- select * from LGRESERVES where IDLOG_RESERVES = @id
+ select * from LGRESERVES where ID = @id
 end
 
 GO
@@ -456,7 +469,7 @@ create procedure spConsultaLogQueue
 )
 as
 begin
- select * from LGQUEUE where IDLOG_QUEUE = @id
+ select * from LGQUEUE where ID = @id
 end
 
 GO
