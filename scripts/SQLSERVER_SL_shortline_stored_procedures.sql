@@ -8,10 +8,263 @@ WHERE type = 'p' AND  is_ms_shipped = 0
 
 exec(@sql);
 
+-------------------------------------- SP PADROES
+ 
+GO
+create procedure spDelete
+(
+ @id int ,
+ @tabela varchar(max)
+)
+as
+begin
+ declare @sql varchar(max);
+ set @sql = ' delete ' + @tabela +
+ ' where id = ' + cast(@id as varchar(max))
+ exec(@sql)
+end
+
+GO
+create procedure spConsulta
+(
+ @id int ,
+ @tabela varchar(max)
+)
+as
+begin
+ declare @sql varchar(max);
+ set @sql = 'select * from ' + @tabela +
+ ' where id = ' + cast(@id as varchar(max))
+ exec(@sql)
+end
+
+GO
+create procedure spListagem
+(
+ @tabela varchar(max),
+ @ordem varchar(max))
+as
+begin
+ exec('select * from ' + @tabela +
+ ' order by ' + @ordem)
+end
+
+--------------- SP USER
+
+GO
+create procedure spInsert_User
+(
+ @login varchar(100),
+ @firstName varchar(100),
+ @lastName varchar(100),
+ @password varchar(100)
+)
+as
+begin
+ insert into TBUSER
+ (LOGIN, FIRST_NAME, LAST_NAME, PASSWORD)
+ values
+ (@login, @firstName, @lastName, @password)
+end
+
+GO 
+create procedure spUpdate_User
+(
+ @id int,
+ @login varchar(100),
+ @firstName varchar(100),
+ @lastName varchar(100),
+ @password varchar(100)
+)
+as
+begin
+ update TBUSER set
+ login = @login,
+ FIRST_NAME = @firstName,
+ LAST_NAME = @lastName,
+ PASSWORD = @password
+ where id = @id 
+end
+
+---------------------------- SP RESERVE
+
+GO
+create procedure spInsert_Reserve
+(
+	@idUser INT,
+	@idQueue INT,
+	@registerIN DATETIME,
+	@checkIN DATETIME,
+	@checkOut DATETIME,
+	@code INT,
+	@status char(1)
+)
+as
+begin
+ insert into TBRESERVES
+ (IDUSER, IDQUEUE, REGISTER_IN, CHECK_IN, CHECK_OUT, CODE, STATUS)
+ values
+ (@idUser,
+	@idQueue,
+	@registerIN,
+	@checkIN,
+	@checkOut,
+	@code,
+	@status)
+end
+
+GO 
+create procedure spUpdate_Reserve
+(
+ @id int,
+ @idUser INT,
+	@idQueue INT,
+	@registerIN DATETIME,
+	@checkIN DATETIME,
+	@checkOut DATETIME,
+	@code INT,
+	@status char(1)
+)
+as
+begin
+ update TBRESERVES set
+ IDUSER = @idUser,
+ IDQUEUE = @idQueue,
+ REGISTER_IN = @registerIN,
+ CHECK_IN = @checkIN,
+ CHECK_OUT = @checkOut,
+ CODE = @code,
+ STATUS = @status
+ where id = @id 
+end
+
+---------------------------------- SP QUEUE
+
+GO
+create procedure spInsert_Queue
+(
+	@idCompany INT,
+	@description varchar(100),
+	@beginDate DATETIME,
+	@endDate DATETIME,
+	@maxSize INT,
+	@lastCode INT,
+	@waitInLine INT,
+	@vacancies INT,
+	@avgWait INT
+)
+as
+begin
+ insert into TBQUEUE
+ (IDCOMPANY,
+	DESCRIPTION_QUEUE,
+	BEGIN_DATE,
+	END_DATE,
+	MAX_SIZE,
+	LAST_CODE,
+	WAIT_INT_LINE,
+	AVG_WAITING,
+	VACANCIES
+	)
+ values
+ (@idCompany,
+	@description,
+	@beginDate,
+	@endDate,
+	@maxSize,
+	@lastCode,
+	@waitInLine,
+	@avgWait,
+	@vacancies
+	)
+end
+
+GO 
+create procedure spUpdate_Queue
+(
+ @id int,
+ @idCompany INT,
+	@description varchar(100),
+	@beginDate DATETIME,
+	@endDate DATETIME,
+	@maxSize INT,
+	@lastCode INT,
+	@waitInLine INT,
+	@vacancies INT,
+	@avgWait INT
+)
+as
+begin
+ update TBQUEUE set
+ IDCOMPANY = @idCompany,
+ BEGIN_DATE = @beginDate,
+ END_DATE = @endDate,
+ MAX_SIZE = @maxSize,
+ LAST_CODE = @lastCode,
+ WAIT_INT_LINE = @waitInLine,
+ DESCRIPTION_QUEUE = @description,
+ AVG_WAITING = @avgWait,
+ VACANCIES = @vacancies
+ where ID = @id 
+end
+
+---------------------------------------- SP COMPANY
+
+GO
+create procedure spInsert_Company
+(
+	@idUser INT,
+	@name varchar(100),
+	@postalCode varchar(20),
+	@addressNumber INT,
+	@latitude decimal(8,5),
+	@longitude decimal(8,5)
+)
+as
+begin
+ insert into TBCOMPANY
+	(
+	IDUSER,
+	NAME,
+	POSTAL_CODE,
+	ADDRESS_NUMBER,
+	LATITUDE,
+	LONGITUDE
+	)
+ values
+ (	@idUser,
+	@name,
+	@postalCode,
+	@addressNumber,
+	@latitude,
+	@longitude)
+end
+
+GO 
+create procedure spUpdate_Company
+(
+	@id int,
+	@idUser int,
+	@name varchar(100),
+	@postalCode varchar(20),
+	@addressNumber INT,
+	@latitude decimal(8,5),
+	@longitude decimal(8,5)
+)
+as
+begin
+ update TBCOMPANY set
+ NAME = @name, 
+ IDUSER = @idUser,
+ POSTAL_CODE = @postalCode,
+ ADDRESS_NUMBER = @addressNumber,
+ LATITUDE = @latitude,
+ LONGITUDE = @longitude
+ where ID = @id 
+end
 
 
-
-------- Procedures Legado -----------
+-------######## Procedures Legado ########-----------
 
 GO
 create procedure spIncluiUser
@@ -90,7 +343,7 @@ begin
 end
 GO
 
---------------------------------------------------------------
+------- LEGADO RESERVE
 
 GO
 create procedure spIncluiReserve
@@ -169,7 +422,7 @@ begin
  select * from TBRESERVES 
 end
 
------------------------------------------------------------------------
+------- LEGADO QUEUE
 
 
 GO
@@ -267,7 +520,7 @@ begin
  select * from TBQUEUE	 
 end
 
--------------------------------------------------------------
+------- LEGADO COMPANY
 
 GO
 create procedure spIncluiCompany
@@ -349,7 +602,7 @@ begin
  select * from TBCOMPANY	 
 end
 
---------------------------------------------------------------------------------
+------- LEGADO LOGRESERVE
 
 GO
 create procedure spIncluiLogReserve
@@ -436,7 +689,7 @@ begin
  select * from LGRESERVES 
 end
 
------------------------------------------------------------------------------
+------- LEGADO LOGQUEUE
 
 
 GO
