@@ -181,7 +181,9 @@ create procedure spIncluiQueue
 	@endDate DATETIME,
 	@maxSize INT,
 	@lastCode INT,
-	@waitInLine INT
+	@waitInLine INT,
+	@vacancies INT,
+	@avgWait INT
 )
 as
 begin
@@ -192,7 +194,10 @@ begin
 	END_DATE,
 	MAX_SIZE,
 	LAST_CODE,
-	WAIT_INT_LINE)
+	WAIT_INT_LINE,
+	AVG_WAITING,
+	VACANCIES
+	)
  values
  (@idCompany,
 	@description,
@@ -200,7 +205,10 @@ begin
 	@endDate,
 	@maxSize,
 	@lastCode,
-	@waitInLine)
+	@waitInLine,
+	@avgWait,
+	@vacancies
+	)
 end
 
 GO 
@@ -213,7 +221,9 @@ create procedure spAlteraQueue
 	@endDate DATETIME,
 	@maxSize INT,
 	@lastCode INT,
-	@waitInLine INT
+	@waitInLine INT,
+	@vacancies INT,
+	@avgWait INT
 )
 as
 begin
@@ -224,7 +234,9 @@ begin
  MAX_SIZE = @maxSize,
  LAST_CODE = @lastCode,
  WAIT_INT_LINE = @waitInLine,
- DESCRIPTION_QUEUE = @description
+ DESCRIPTION_QUEUE = @description,
+ AVG_WAITING = @avgWait,
+ VACANCIES = @vacancies
  where ID = @id 
 end
 
