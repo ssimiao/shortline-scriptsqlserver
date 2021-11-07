@@ -37,6 +37,7 @@ create table TBUSER(
 	FIRST_NAME varchar(50) NOT NULL,
 	LAST_NAME varchar(50) NOT NULL, 
 	PASSWORD char(100) NOT NULL,
+	COMPANY bit NOT NULL,
 	primary key (ID)
 );
 

@@ -262,7 +262,18 @@ begin
  LONGITUDE = @longitude
  where ID = @id 
 end
+go
 
+create procedure spGetCompanyLoginByUserId
+(
+	@idUser int
+)
+as
+begin
+	select *
+	from TBCOMPANY
+	where IDUSER = @idUser
+end
 
 -------######## Procedures Legado ########-----------
 
