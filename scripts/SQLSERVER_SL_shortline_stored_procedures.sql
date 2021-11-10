@@ -27,14 +27,15 @@ end
 GO
 create procedure spConsulta
 (
- @id int ,
- @tabela varchar(max)
+ @tabela varchar(max),
+ @campo varchar(max),
+ @id varchar(max)
 )
 as
 begin
  declare @sql varchar(max);
  set @sql = 'select * from ' + @tabela +
- ' where id = ' + cast(@id as varchar(max))
+ ' where ' + @campo + ' = ''' + @id + ''''
  exec(@sql)
 end
 
