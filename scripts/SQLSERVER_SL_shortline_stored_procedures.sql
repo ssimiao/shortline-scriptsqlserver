@@ -55,16 +55,17 @@ GO
 create procedure spInsert_User
 (
  @login varchar(100),
- @firstName varchar(100),
- @lastName varchar(100),
- @password varchar(100)
+ @first_Name varchar(100),
+ @last_Name varchar(100),
+ @password varchar(100),
+ @company bit
 )
 as
 begin
  insert into TBUSER
- (LOGIN, FIRST_NAME, LAST_NAME, PASSWORD)
+ (LOGIN, FIRST_NAME, LAST_NAME, PASSWORD, COMPANY)
  values
- (@login, @firstName, @lastName, @password)
+ (@login, @first_Name, @last_Name, @password, @company)
 end
 
 GO 
@@ -72,17 +73,19 @@ create procedure spUpdate_User
 (
  @id int,
  @login varchar(100),
- @firstName varchar(100),
- @lastName varchar(100),
- @password varchar(100)
+ @first_Name varchar(100),
+ @last_Name varchar(100),
+ @password varchar(100),
+ @company bit
 )
 as
 begin
  update TBUSER set
  login = @login,
- FIRST_NAME = @firstName,
- LAST_NAME = @lastName,
- PASSWORD = @password
+ FIRST_NAME = @first_Name,
+ LAST_NAME = @last_Name,
+ PASSWORD = @password,
+ COMPANY = @company
  where id = @id 
 end
 
