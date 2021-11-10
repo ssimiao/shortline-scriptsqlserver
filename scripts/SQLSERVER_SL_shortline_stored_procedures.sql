@@ -93,7 +93,7 @@ end
 ---------------------------- SP RESERVE
 
 GO
-create procedure spInsert_Reserve
+create procedure spInsert_TBRESERVES
 (
 	@idUser INT,
 	@idQueue INT,
@@ -118,7 +118,7 @@ begin
 end
 
 GO 
-create procedure spUpdate_Reserve
+create procedure spUpdate_TBRESERVES
 (
  @id int,
  @idUser INT,
@@ -145,7 +145,7 @@ end
 ---------------------------------- SP QUEUE
 
 GO
-create procedure spInsert_Queue
+create procedure spInsert_TBQUEUE
 (
 	@idCompany INT,
 	@description varchar(100),
@@ -184,7 +184,7 @@ begin
 end
 
 GO 
-create procedure spUpdate_Queue
+create procedure spUpdate_TBQUEUE
 (
  @id int,
  @idCompany INT,
