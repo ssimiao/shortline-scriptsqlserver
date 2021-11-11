@@ -207,3 +207,42 @@ BEGIN
     END
  
 END
+
+------------------------------------ trigger para aumentar e diminuir a contagem de pessoas nas filas campo wait_in_line
+
+
+IF ((SELECT COUNT(*) FROM sys.triggers WHERE name = 'trgAumentaContagem_Queue' AND parent_id = OBJECT_ID('dbo.TBRESERVES')) > 0) DROP TRIGGER trgAumentaContagem_Queue
+GO
+ 
+CREATE TRIGGER [dbo].[trgAumentaContagem_Queue] ON [dbo].[TBRESERVES] -- Tabela que a trigger será associada
+AFTER INSERT AS
+BEGIN
+    
+    SET NOCOUNT ON
+        
+        IF (EXISTS(SELECT * FROM Inserted))
+        BEGIN
+			declare @idQueue int = (Select IDQUEUE FROM inserted);
+			declare @waitInLine int = (Select WAIT_INT_LINE from TBQUEUE where id = @idQueue)
+            update TBQUEUE set WAIT_INT_LINE = @waitInLine + 1 where ID = @idQueue 
+        END
+END
+
+------------
+
+IF ((SELECT COUNT(*) FROM sys.triggers WHERE name = 'trgDiminuiContagem_Queue' AND parent_id = OBJECT_ID('dbo.TBRESERVES')) > 0) DROP TRIGGER trgDiminuiContagem_Queue
+GO
+ 
+CREATE TRIGGER [dbo].[trgDiminuiContagem_Queue] ON [dbo].[TBRESERVES] -- Tabela que a trigger será associada
+AFTER UPDATE AS
+BEGIN
+    
+    SET NOCOUNT ON
+        
+        IF (EXISTS(SELECT * FROM Inserted) AND EXISTS (SELECT * FROM Deleted))
+        BEGIN
+			declare @idQueue int = (Select IDQUEUE FROM inserted);
+			declare @waitInLine int = (Select WAIT_INT_LINE from TBQUEUE where id = @idQueue)
+            update TBQUEUE set WAIT_INT_LINE = @waitInLine - 1 where ID = @idQueue 
+        END
+END
