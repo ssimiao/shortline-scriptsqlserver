@@ -130,8 +130,8 @@ create procedure spInsert_TBRESERVES
 	@idUser INT,
 	@idQueue INT,
 	@registerIN DATETIME,
-	@checkIN DATETIME,
-	@checkOut DATETIME,
+	@checkIN DATETIME = null,
+	@checkOut DATETIME = null,
 	@code INT,
 	@status char(1)
 )
