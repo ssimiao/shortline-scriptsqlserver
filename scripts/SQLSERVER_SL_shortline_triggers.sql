@@ -1,6 +1,6 @@
 use shortline;
 
---------------------------- Evita alterar mais de 1 registro das tabelas por operaÁ„o
+--------------------------- Evita alterar mais de 1 registro das tabelas por opera√ß√£o
 
 IF (OBJECT_ID('[dbo].[trgEvita_Dml_Muitos_Registros]') IS NOT NULL) DROP TRIGGER [dbo].[trgEvita_Dml_Muitos_Registros]
 GO
@@ -16,7 +16,7 @@ BEGIN
     IF (@Linhas_Alteradas > 1)
     BEGIN 
         ROLLBACK TRANSACTION; 
-        SET @MsgErro = 'OperaÁıes de DELETE e/ou UPDATE sÛ podem atualizar 1 registro por vez na tabela "TBUSER", e vocÍ tentou atualizar ' + CAST(@Linhas_Alteradas AS VARCHAR(50))
+        SET @MsgErro = 'Opera√ß√µes de DELETE e/ou UPDATE s√≥ podem atualizar 1 registro por vez na tabela "TBUSER", e voc√™ tentou atualizar ' + CAST(@Linhas_Alteradas AS VARCHAR(50))
         RAISERROR (@MsgErro, 15, 1); 
         RETURN;
     END 
@@ -25,7 +25,7 @@ BEGIN
 END; 
 
 
-------------------------- Trigger para impedir alguÈm de apagar ou alterar os logs|historico de operaÁıes efetuadas da aplicaÁ„o
+------------------------- Trigger para impedir algu√©m de apagar ou alterar os logs|historico de opera√ß√µes efetuadas da aplica√ß√£o
 
 GO
 IF (OBJECT_ID('[dbo].[trgBloqueia_Dml_LGQUEUE]') IS NOT NULL) DROP TRIGGER [dbo].[trgBloqueia_Dml_LGQUEUE]
@@ -39,7 +39,7 @@ BEGIN
     IF EXISTS (SELECT * FROM deleted) AND NOT EXISTS (SELECT * FROM inserted) 
     BEGIN 
         ROLLBACK TRANSACTION; 
-        RAISERROR ('OperaÁıes de DELETE n„o s„o permitidas na tabela "Teste_Trigger"', 15, 1); 
+        RAISERROR ('Opera√ß√µes de DELETE n√£o s√£o permitidas na tabela "Teste_Trigger"', 15, 1); 
         RETURN;
     END 
   
@@ -47,7 +47,7 @@ BEGIN
     IF EXISTS (SELECT * FROM inserted) AND EXISTS (SELECT * FROM deleted) 
     BEGIN 
         ROLLBACK TRANSACTION; 
-        RAISERROR ('OperaÁıes de UPDATE n„o s„o permitidas na tabela "Teste_Trigger"', 15, 1); 
+        RAISERROR ('Opera√ß√µes de UPDATE n√£o s√£o permitidas na tabela "Teste_Trigger"', 15, 1); 
         RETURN;
     END 
   
@@ -66,7 +66,7 @@ BEGIN
     IF EXISTS (SELECT * FROM deleted) AND NOT EXISTS (SELECT * FROM inserted) 
     BEGIN 
         ROLLBACK TRANSACTION; 
-        RAISERROR ('OperaÁıes de DELETE n„o s„o permitidas na tabela "LGRESERVES"', 15, 1); 
+        RAISERROR ('Opera√ß√µes de DELETE n√£o s√£o permitidas na tabela "LGRESERVES"', 15, 1); 
         RETURN;
     END 
   
@@ -74,7 +74,7 @@ BEGIN
     IF EXISTS (SELECT * FROM inserted) AND EXISTS (SELECT * FROM deleted) 
     BEGIN 
         ROLLBACK TRANSACTION; 
-        RAISERROR ('OperaÁıes de UPDATE n„o s„o permitidas na tabela "LGRESERVES"', 15, 1); 
+        RAISERROR ('Opera√ß√µes de UPDATE n√£o s√£o permitidas na tabela "LGRESERVES"', 15, 1); 
         RETURN;
     END 
   
@@ -86,7 +86,7 @@ IF (OBJECT_ID('dbo.LGRESERVES') IS NOT NULL) DROP TABLE LGRESERVES
 create table LGRESERVES(
 	OPERATION CHAR(1) NULL,
 	INCLUDE_IN DATETIME NULL,
-	IDLOG_RESERVES INT IDENTITY NOT NULL UNIQUE,
+	ID INT IDENTITY NOT NULL UNIQUE,
 	IDQUEUE INT NOT NULL,
 	IDUSER INT NOT NULL,
 	IDRESERVE INT NOT NULL,
@@ -95,14 +95,15 @@ create table LGRESERVES(
 	CHECK_OUT DATETIME NULL,
 	CODE INT NULL,
 	STATUS char(1) NULL
-	PRIMARY KEY (IDLOG_RESERVES)
+	PRIMARY KEY (ID)
 );
 GO
 
 IF ((SELECT COUNT(*) FROM sys.triggers WHERE name = 'trgHistorico_Reserves' AND parent_id = OBJECT_ID('dbo.TBRESERVES')) > 0) DROP TRIGGER trgHistorico_Reserves
 GO
  
-CREATE TRIGGER [dbo].[trgHistorico_Reserves] ON [dbo].[TBRESERVES] -- Tabela que a trigger ser· associada
+GO
+CREATE TRIGGER [dbo].[trgHistorico_Reserves] ON [dbo].[TBRESERVES] -- Tabela que a trigger ser√° associada
 AFTER INSERT, UPDATE, DELETE AS
 BEGIN
     
@@ -116,8 +117,8 @@ BEGIN
  
     IF (EXISTS(SELECT * FROM Inserted) AND EXISTS (SELECT * FROM Deleted))
     BEGIN
-        INSERT INTO LGRESERVES(OPERATION,INCLUDE_IN,IDUSER, IDQUEUE, REGISTER_IN, CHECK_IN, CHECK_OUT, CODE, STATUS)
-        SELECT 'UPDATE',@Data, IDUSER, IDQUEUE, REGISTER_IN, CHECK_IN, CHECK_OUT, CODE, STATUS
+        INSERT INTO LGRESERVES(OPERATION,INCLUDE_IN,IDUSER, IDRESERVE,IDQUEUE, REGISTER_IN, CHECK_IN, CHECK_OUT, CODE, STATUS)
+        SELECT 'U',@Data, IDUSER, ID,IDQUEUE, REGISTER_IN, CHECK_IN, CHECK_OUT, CODE, STATUS
         FROM Inserted
  
     END
@@ -126,15 +127,15 @@ BEGIN
         IF (EXISTS(SELECT * FROM Inserted))
         BEGIN
  
-            INSERT INTO LGRESERVES(OPERATION,INCLUDE_IN,IDUSER, IDQUEUE, REGISTER_IN, CHECK_IN, CHECK_OUT, CODE, STATUS)
-			SELECT 'INSERT',@Data, IDUSER, IDQUEUE, REGISTER_IN, CHECK_IN, CHECK_OUT, CODE, STATUS
+            INSERT INTO LGRESERVES(OPERATION,INCLUDE_IN,IDUSER,IDRESERVE, IDQUEUE, REGISTER_IN, CHECK_IN, CHECK_OUT, CODE, STATUS)
+			SELECT 'I',@Data, IDUSER, ID, IDQUEUE, REGISTER_IN, CHECK_IN, CHECK_OUT, CODE, STATUS
             FROM Inserted
  
         END
         ELSE BEGIN
  
-            INSERT INTO LGRESERVES(OPERATION,INCLUDE_IN,IDUSER, IDQUEUE, REGISTER_IN, CHECK_IN, CHECK_OUT, CODE, STATUS)
-			SELECT 'DELETE',@Data, IDUSER, IDQUEUE, REGISTER_IN, CHECK_IN, CHECK_OUT, CODE, STATUS
+            INSERT INTO LGRESERVES(OPERATION,INCLUDE_IN,IDUSER, IDRESERVE, IDQUEUE, REGISTER_IN, CHECK_IN, CHECK_OUT, CODE, STATUS)
+			SELECT 'D',@Data, IDUSER, ID, IDQUEUE, REGISTER_IN, CHECK_IN, CHECK_OUT, CODE, STATUS
             FROM Deleted
  
         END
@@ -147,7 +148,7 @@ END
 
 IF (OBJECT_ID('dbo.LGQUEUE') IS NOT NULL) DROP TABLE LGQUEUE
 create table LGQUEUE(
-	IDLOG_QUEUE INT IDENTITY NOT NULL UNIQUE,
+	ID INT IDENTITY NOT NULL UNIQUE,
 	IDQUEUE INT NOT NULL,
 	IDCOMPANY INT NOT NULL,
 	DESCRIPTION_LOG VARCHAR(20) NULL,
@@ -158,14 +159,14 @@ create table LGQUEUE(
 	WAIT_INT_LINE INT NULL,
 	OPERATION CHAR(1) NULL,
 	INCLUDE_IN DATETIME NULL,
-	PRIMARY KEY (IDLOG_QUEUE)
+	PRIMARY KEY (ID)
 );
 GO
 
 IF ((SELECT COUNT(*) FROM sys.triggers WHERE name = 'trgHistorico_Queue' AND parent_id = OBJECT_ID('dbo.TBQUEUE')) > 0) DROP TRIGGER trgHistorico_Queue
 GO
  
-CREATE TRIGGER [dbo].[trgHistorico_Queue] ON [dbo].[TBQUEUE] -- Tabela que a trigger ser· associada
+CREATE TRIGGER [dbo].[trgHistorico_Queue] ON [dbo].[TBQUEUE] -- Tabela que a trigger ser√° associada
 AFTER INSERT, UPDATE, DELETE AS
 BEGIN
     
@@ -181,7 +182,7 @@ BEGIN
     BEGIN
         
         INSERT INTO LGQUEUE(OPERATION,INCLUDE_IN,IDQUEUE,IDCOMPANY,DESCRIPTION_LOG,BEGIN_DATE,END_DATE,MAX_SIZE,LAST_CODE,WAIT_INT_LINE)
-        SELECT 'U',@Data, IDQUEUE, IDCOMPANY, DESCRIPTION_QUEUE,BEGIN_DATE,END_DATE,MAX_SIZE,LAST_CODE,WAIT_INT_LINE
+        SELECT 'U',@Data, ID, IDCOMPANY, DESCRIPTION_QUEUE,BEGIN_DATE,END_DATE,MAX_SIZE,LAST_CODE,WAIT_INT_LINE
         FROM Inserted
  
     END
@@ -191,14 +192,14 @@ BEGIN
         BEGIN
  
             INSERT INTO LGQUEUE(OPERATION,INCLUDE_IN,IDQUEUE,IDCOMPANY,DESCRIPTION_LOG,BEGIN_DATE,END_DATE,MAX_SIZE,LAST_CODE,WAIT_INT_LINE)
-			SELECT 'I',@Data, IDQUEUE, IDCOMPANY, DESCRIPTION_QUEUE,BEGIN_DATE,END_DATE,MAX_SIZE,LAST_CODE,WAIT_INT_LINE
+			SELECT 'I',@Data, ID, IDCOMPANY, DESCRIPTION_QUEUE,BEGIN_DATE,END_DATE,MAX_SIZE,LAST_CODE,WAIT_INT_LINE
             FROM Inserted
  
         END
         ELSE BEGIN
  
             INSERT INTO LGQUEUE(OPERATION,INCLUDE_IN,IDQUEUE,IDCOMPANY,DESCRIPTION_LOG,BEGIN_DATE,END_DATE,MAX_SIZE,LAST_CODE,WAIT_INT_LINE)
-			SELECT 'D',@Data, IDQUEUE, IDCOMPANY,DESCRIPTION_QUEUE ,BEGIN_DATE,END_DATE,MAX_SIZE,LAST_CODE,WAIT_INT_LINE
+			SELECT 'D',@Data, ID, IDCOMPANY,DESCRIPTION_QUEUE ,BEGIN_DATE,END_DATE,MAX_SIZE,LAST_CODE,WAIT_INT_LINE
             FROM Deleted
  
         END
