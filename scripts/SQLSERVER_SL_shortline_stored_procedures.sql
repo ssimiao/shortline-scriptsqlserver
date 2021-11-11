@@ -157,9 +157,9 @@ create procedure spUpdate_TBRESERVES
 	@idQueue INT,
 	@registerIN DATETIME,
 	@checkIN DATETIME,
-	@checkOut DATETIME,
+	@checkOut DATETIME = null,
 	@code INT,
-	@status char(1)
+	@status char(1) = null
 )
 as
 begin
