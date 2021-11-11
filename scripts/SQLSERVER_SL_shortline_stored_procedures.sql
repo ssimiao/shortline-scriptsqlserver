@@ -10,6 +10,24 @@ exec(@sql);
 
 -------------------------------------- SP PADROES
  
+ GO
+create procedure spConsultaComJoin
+(
+ @tabela varchar(max),
+ @campoTabela varchar(max),
+ @tabelaJoin varchar(max),
+ @campoJoin varchar(max),
+ @campo varchar(max),
+ @id varchar(max)
+)
+as
+begin
+ declare @sql varchar(max);
+ set @sql = 'select * from ' + @tabela + ' inner join ' + @tabelaJoin + ' on ' + @tabela + '.' + @campoTabela + ' = ' + @tabelaJoin + '.' + @campoJoin +
+ ' where ' + @tabela + '.' + @campo + ' = ''' + @id + ''''
+ exec(@sql)
+end
+ 
 GO
 create procedure spDelete
 (
