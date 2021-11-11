@@ -9,6 +9,20 @@ WHERE type = 'p' AND  is_ms_shipped = 0
 exec(@sql);
 
 -------------------------------------- SP PADROES
+
+GO
+create procedure spConsultaComId
+(
+ @tabela varchar(max),
+ @id varchar(max)
+)
+as
+begin
+ declare @sql varchar(max);
+ set @sql = 'select * from ' + @tabela +
+ ' where id = ' + @id
+ exec(@sql)
+end
  
  GO
 create procedure spConsultaComJoin
