@@ -225,9 +225,9 @@ create procedure spUpdate_TBQUEUE
 	@endDate DATETIME,
 	@maxSize INT,
 	@lastCode INT,
-	@waitInLine INT,
-	@vacancies INT,
-	@avgWait INT
+	@waitInLine INT = 0,
+	@vacancies INT = 0,
+	@avgWait INT = null
 )
 as
 begin
