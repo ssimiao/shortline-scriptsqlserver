@@ -184,10 +184,10 @@ create procedure spInsert_TBQUEUE
 	@beginDate DATETIME,
 	@endDate DATETIME,
 	@maxSize INT,
-	@lastCode INT,
-	@waitInLine INT,
+	@lastCode INT = 0,
+	@waitInLine INT = 0,
 	@vacancies INT,
-	@avgWait INT
+	@avgWait INT = null
 )
 as
 begin
