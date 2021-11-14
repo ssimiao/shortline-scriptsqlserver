@@ -85,7 +85,7 @@ end
 --------------- SP USER
 
 GO
-create procedure spInsert_User
+create procedure spInsert_TBUSER
 (
  @login varchar(100),
  @first_Name varchar(100),
@@ -102,7 +102,7 @@ begin
 end
 
 GO 
-create procedure spUpdate_User
+create procedure spUpdate_TBUSER
 (
  @id int,
  @login varchar(100),
@@ -247,7 +247,7 @@ end
 ---------------------------------------- SP COMPANY
 
 GO
-create procedure spInsert_Company
+create procedure spInsert_TBCompany
 (
 	@idUser INT,
 	@name varchar(100),
@@ -277,7 +277,7 @@ begin
 end
 
 GO 
-create procedure spUpdate_Company
+create procedure spUpdate_TBCompany
 (
 	@id int,
 	@idUser int,
