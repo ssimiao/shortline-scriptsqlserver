@@ -209,7 +209,7 @@ BEGIN
 END
 
 ------------------------------------ trigger para aumentar e diminuir a contagem de pessoas nas filas campo wait_in_line
-
+GO
 
 IF ((SELECT COUNT(*) FROM sys.triggers WHERE name = 'trgAumentaContagem_Queue' AND parent_id = OBJECT_ID('dbo.TBRESERVES')) > 0) DROP TRIGGER trgAumentaContagem_Queue
 GO
