@@ -6,7 +6,7 @@ IF (OBJECT_ID('[dbo].[trgEvita_Dml_Muitos_Registros]') IS NOT NULL) DROP TRIGGER
 GO
  
 CREATE TRIGGER [dbo].[trgEvita_Dml_Muitos_Registros] ON [dbo].[TBUSER]
-FOR UPDATE, DELETE AS 
+FOR UPDATE AS 
 BEGIN 
   
     DECLARE 
@@ -16,7 +16,7 @@ BEGIN
     IF (@Linhas_Alteradas > 1)
     BEGIN 
         ROLLBACK TRANSACTION; 
-        SET @MsgErro = 'Operações de DELETE e/ou UPDATE só podem atualizar 1 registro por vez na tabela "TBUSER", e você tentou atualizar ' + CAST(@Linhas_Alteradas AS VARCHAR(50))
+        SET @MsgErro = 'Operações de UPDATE só podem atualizar 1 registro por vez na tabela "TBUSER", e você tentou atualizar ' + CAST(@Linhas_Alteradas AS VARCHAR(50))
         RAISERROR (@MsgErro, 15, 1); 
         RETURN;
     END 
@@ -245,4 +245,49 @@ BEGIN
 			declare @waitInLine int = (Select WAIT_INT_LINE from TBQUEUE where id = @idQueue)
             update TBQUEUE set WAIT_INT_LINE = @waitInLine - 1 where ID = @idQueue 
         END
+END
+
+IF ((SELECT COUNT(*) FROM sys.triggers WHERE name = 'trgDeleteUserANDCompany' AND parent_id = OBJECT_ID('dbo.TBCOMPANY')) > 0) DROP TRIGGER trgDeleteUserANDCompany
+GO
+
+CREATE TRIGGER [dbo].[trgDeleteUserANDCompany] ON [dbo].[TBCOMPANY]
+INSTEAD OF DELETE AS
+BEGIN
+	
+	SET NOCOUNT ON
+
+		IF(EXISTS(SELECT * FROM deleted))
+		BEGIN
+			declare @idDeleted int
+			declare @idCompanyDeleted int
+
+			declare cursorDeleted cursor for
+				select ID
+				from deleted
+
+			open cursorDeleted
+
+			FETCH NEXT FROM cursorDeleted
+				INTO @idDeleted
+
+			WHILE @@FETCH_STATUS = 0
+			BEGIN
+				
+				set @idCompanyDeleted = (select ID from TBCOMPANY where ID = @idDeleted)
+
+				delete from TBRESERVES where IDUSER = @idDeleted
+				delete from TBQUEUE where IDCOMPANY = @idCompanyDeleted
+				delete from TBCOMPANY where IDUSER = @idDeleted
+				delete from TBUSER where ID = @idDeleted
+
+				FETCH NEXT FROM cursorDeleted
+				INTO @idDeleted
+
+			END
+			
+		END
+
+		close cursorDeleted
+		deallocate cursorDeleted
+
 END
