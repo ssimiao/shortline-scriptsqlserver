@@ -145,7 +145,7 @@ BEGIN
 END
 
 -------------------------------------------------------------
-
+GO
 IF (OBJECT_ID('dbo.LGQUEUE') IS NOT NULL) DROP TABLE LGQUEUE
 create table LGQUEUE(
 	ID INT IDENTITY NOT NULL UNIQUE,
@@ -228,6 +228,7 @@ BEGIN
         END
 END
 
+GO
 ------------
 
 IF ((SELECT COUNT(*) FROM sys.triggers WHERE name = 'trgDiminuiContagem_Queue' AND parent_id = OBJECT_ID('dbo.TBRESERVES')) > 0) DROP TRIGGER trgDiminuiContagem_Queue
@@ -246,6 +247,8 @@ BEGIN
             update TBQUEUE set WAIT_INT_LINE = @waitInLine - 1 where ID = @idQueue 
         END
 END
+
+GO
 
 IF ((SELECT COUNT(*) FROM sys.triggers WHERE name = 'trgDeleteUserANDCompany' AND parent_id = OBJECT_ID('dbo.TBCOMPANY')) > 0) DROP TRIGGER trgDeleteUserANDCompany
 GO
