@@ -264,6 +264,7 @@ BEGIN
 			declare @idDeleted int
 			declare @idCompanyDeleted int
 
+
 			declare cursorDeleted cursor for
 				select ID
 				from deleted
@@ -278,10 +279,19 @@ BEGIN
 				
 				set @idCompanyDeleted = (select ID from TBCOMPANY where ID = @idDeleted)
 
+				if(exists (select 1 from TBRESERVES where IDUSER = @idDeleted))
+				begin
+					declare @idQueueWasInserted int = (select IDQUEUE from TBRESERVES where IDUSER = @idDeleted)
+					
+					update TBQUEUE set WAIT_INT_LINE = WAIT_INT_LINE - 1 where ID = @idQueueWasInserted
+				end
+
 				delete from TBRESERVES where IDUSER = @idDeleted
 				delete from TBQUEUE where IDCOMPANY = @idCompanyDeleted
 				delete from TBCOMPANY where IDUSER = @idDeleted
 				delete from TBUSER where ID = @idDeleted
+
+				
 
 				FETCH NEXT FROM cursorDeleted
 				INTO @idDeleted
