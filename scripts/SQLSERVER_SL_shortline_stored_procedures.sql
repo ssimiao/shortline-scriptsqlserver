@@ -253,8 +253,8 @@ create procedure spInsert_TBCompany
 	@name varchar(100),
 	@postalCode varchar(20),
 	@addressNumber INT,
-	@latitude decimal(8,5),
-	@longitude decimal(8,5)
+	@latitude decimal(11,8),
+	@longitude decimal(11,8)
 )
 as
 begin
@@ -284,8 +284,8 @@ create procedure spUpdate_TBCompany
 	@name varchar(100),
 	@postalCode varchar(20),
 	@addressNumber INT,
-	@latitude decimal(8,5),
-	@longitude decimal(8,5)
+	@latitude decimal(11,8),
+	@longitude decimal(11,8)
 )
 as
 begin
@@ -576,8 +576,8 @@ create procedure spIncluiCompany
 	@name varchar(100),
 	@postalCode varchar(20),
 	@addressNumber INT,
-	@latitude decimal(8,5),
-	@longitude decimal(8,5)
+	@latitude decimal(11,8),
+	@longitude decimal(11,8)
 )
 as
 begin

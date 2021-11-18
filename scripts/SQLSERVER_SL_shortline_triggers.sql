@@ -310,45 +310,45 @@ GO
 IF ((SELECT COUNT(*) FROM sys.triggers WHERE name = 'trgDeleteCompany' AND parent_id = OBJECT_ID('dbo.TBCOMPANY')) > 0) DROP TRIGGER trgDeleteCompany
 GO
 
-CREATE TRIGGER [dbo].trgDeleteCompany ON [dbo].[TBCOMPANY]
-INSTEAD OF DELETE AS
-BEGIN
+--CREATE TRIGGER [dbo].trgDeleteCompany ON [dbo].[TBCOMPANY]
+--INSTEAD OF DELETE AS
+--BEGIN
 	
-	SET NOCOUNT ON
+--	SET NOCOUNT ON
 
-		IF(EXISTS(SELECT * FROM deleted))
-		BEGIN
-			declare @idUserDeleted int
-			declare @idCompanyDeleted int
+--		IF(EXISTS(SELECT * FROM deleted))
+--		BEGIN
+--			declare @idUserDeleted int
+--			declare @idCompanyDeleted int
 
-			declare cursorDeleted cursor for
-				select ID
-				from deleted
+--			declare cursorDeleted cursor for
+--				select ID
+--				from deleted
 
-			open cursorDeleted
+--			open cursorDeleted
 
-			FETCH NEXT FROM cursorDeleted
-				INTO @idCompanyDeleted
+--			FETCH NEXT FROM cursorDeleted
+--				INTO @idCompanyDeleted
 
-			WHILE @@FETCH_STATUS = 0
-			BEGIN
+--			WHILE @@FETCH_STATUS = 0
+--			BEGIN
 				
-				set @idUserDeleted = (select IDUSER from TBCOMPANY where ID = @idCompanyDeleted)
+--				set @idUserDeleted = (select IDUSER from TBCOMPANY where ID = @idCompanyDeleted)
 
-				delete from TBRESERVES where IDUSER = @idUserDeleted
-				delete from TBQUEUE where IDCOMPANY = @idCompanyDeleted
-				delete from TBCOMPANY where IDUSER = @idUserDeleted
-				delete from TBUSER where ID = @idUserDeleted
+--				delete from TBRESERVES where IDUSER = @idUserDeleted
+--				delete from TBQUEUE where IDCOMPANY = @idCompanyDeleted
+--				delete from TBCOMPANY where IDUSER = @idUserDeleted
+--				delete from TBUSER where ID = @idUserDeleted
 
-				FETCH NEXT FROM cursorDeleted
-					INTO @idCompanyDeleted
+--				FETCH NEXT FROM cursorDeleted
+--					INTO @idCompanyDeleted
 
-			END
+--			END
 			
-		END
+--		END
 
-		close cursorDeleted
-		deallocate cursorDeleted
+--		close cursorDeleted
+--		deallocate cursorDeleted
 
-END
+--END
 
