@@ -240,14 +240,14 @@ BEGIN
     
     SET NOCOUNT ON
         
-        IF (EXISTS(SELECT * FROM Inserted) AND EXISTS (SELECT * FROM Deleted))
-        BEGIN
-			declare @idQueue int = (Select IDQUEUE FROM inserted);
-			declare @waitInLine int = (Select WAIT_INT_LINE from TBQUEUE where id = @idQueue)
-            update TBQUEUE set WAIT_INT_LINE = @waitInLine - 1 where ID = @idQueue 
-        END
+		declare @idQueue int = (Select IDQUEUE FROM inserted);
+		declare @waitInLine int = (Select WAIT_INT_LINE from TBQUEUE where id = @idQueue)
+		declare @checkout datetime = (SELECT CHECK_OUT FROM inserted)
+		if(@checkout is null)		
+			update TBQUEUE set WAIT_INT_LINE = @waitInLine - 1 where ID = @idQueue
+		else
+			print 'checkout não é nulo entao o usuario ja foi removido da fila'
 END
-
 GO
 
 IF ((SELECT COUNT(*) FROM sys.triggers WHERE name = 'trgDeleteUser' AND parent_id = OBJECT_ID('dbo.TBUSER')) > 0) DROP TRIGGER trgDeleteUser
